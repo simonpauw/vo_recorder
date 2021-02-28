@@ -10,6 +10,7 @@ def init_print():
     colorama.init()
 
 def print_exit():
+    cursor.show()
     print()
     print('Bye!')
 

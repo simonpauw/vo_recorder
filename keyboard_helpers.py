@@ -1,4 +1,5 @@
 from pynput import keyboard
+import msvcrt
 
 running = True
 holding_key = {'[': False}
@@ -9,6 +10,7 @@ def on_press(key):
     try:
         holding_key[key.char] = True
         released_key[key.char] = False
+        msvcrt.getch()
         if key.char == 'q':
             running = False
             return False
@@ -27,7 +29,10 @@ def on_release(key):
 
 def start_keyboard():
     listener = keyboard.Listener(
-        on_press=on_press,
-        on_release=on_release
+        on_press   = on_press,
+        on_release = on_release,
+        surpress   = True
         )
     listener.start()
+
+# def end_keyboard():

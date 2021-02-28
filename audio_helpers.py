@@ -1,25 +1,28 @@
 import pyaudio
 import wave
-
+from pathlib import Path
+import os
 
 AUDIO_PARAMS = {'channels':         2,
                 'format':           pyaudio.paInt16,
                 'rate':             44100,
                 'chunk':            22050,
-                'audio_device_id':  None}
+                'audio_device_id':  None,
+                'basename': 'unnamed',
+                'dir': Path('.')}
 
 audio_state = {
     'recording': False,
     'frames': None,
     'player': None,
     'stream': None,
-    'basename': 'test',
-    'dir': 'recordings',
     'seq': 1,
-    'try': 0}
+    'try': 0,
+    'final': False}
 
-def filename(state):
-    return f"{state['dir']}/{state['basename']}_{state['seq']:03}_{state['try']:03}.wav"
+def filename(state, pref = ''):
+    fn = Path(pref + f"{AUDIO_PARAMS['basename']}_{state['seq']:03}_{state['try']:03}.wav")
+    return str(AUDIO_PARAMS['dir'] / fn)
 
 
 def start_rec_stream():
@@ -37,8 +40,12 @@ def start_rec_stream():
     audio_state['recording'] = True
     audio_state['frames'] = []
     audio_state['try'] += 1
+    audio_state['final'] = False
 
-
+def rename_final():
+    old_fn = filename(audio_state)
+    new_fn = filename(audio_state, pref = 'FINAL_')
+    os.rename(old_fn, new_fn)
 
 def stop_rec_stream():
     audio_state['stream'].stop_stream()
@@ -46,7 +53,6 @@ def stop_rec_stream():
     audio_state['stream'] = None
     audio_state['player'].terminate()
     audio_state['recording'] = False
-
 
 def write_frames():
     wf = wave.open(filename(audio_state), 'wb')

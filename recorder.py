@@ -4,6 +4,8 @@ import print_helpers as pr
 import audio_helpers as audio
 import keyboard_helpers as kb
 
+import argparse
+
 def loop():
     # when finished last try
     if kb.released_key[']']:
@@ -17,6 +19,7 @@ def loop():
         # is there has been at least one try
         if audio.audio_state['try'] > 0:
             pr.print_final_try(audio.audio_state['try'])
+            audio.rename_final()
             audio.audio_state['seq'] += 1
             audio.audio_state['try'] = 0
 
@@ -51,12 +54,23 @@ def init():
     pr.print_start_recording()
 
 def exit():
-
-    pr.cursor.show()
-
     pr.print_exit()
 
 if __name__ == '__main__':
+    hlp = """The name of your project (files will be named [FINAL_]name_XXX_YYY).
+Where FINAL indicates it's the final take of the sequence,
+XXX is the sequence number (aligned with script),
+and YYY is the trial number."""
+    parser = argparse.ArgumentParser(description='Record sound for screen casts.')
+    parser.add_argument('project_name', metavar='name', type=str, nargs=1, help = hlp)
+    parser.add_argument('-d', metavar='project directory', type=str, nargs=1, help = 'ouput directory for the project files')
+
+    args = parser.parse_args()
+    audio.AUDIO_PARAMS['basename'] = args.project_name[0]
+    if args.d:
+        audio.AUDIO_PARAMS['dir'] = args.d[0]
+
+
     init()
     while kb.running:
         loop()
