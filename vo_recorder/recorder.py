@@ -1,10 +1,12 @@
 import time
 
-import print_helpers as pr
-import audio_helpers as audio
-import keyboard_helpers as kb
+import vo_recorder.print_helpers as pr
+import vo_recorder.audio_helpers as audio
+import vo_recorder.keyboard_helpers as kb
 
 import argparse
+
+
 
 def loop():
     # when finished last try
@@ -56,7 +58,7 @@ def init():
 def exit():
     pr.print_exit()
 
-if __name__ == '__main__':
+def main():
     hlp = """The name of your project (files will be named [FINAL_]name_XXX_YYY).
 Where FINAL indicates it's the final take of the sequence,
 XXX is the sequence number (aligned with script),
